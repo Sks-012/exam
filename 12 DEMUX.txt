@@ -1,0 +1,62 @@
+1:2 DEMUX
+
+module demux1to2 (
+    input d,
+    input sel,
+    output reg [1:0] y // y[1] is output1, y[0] is output0
+);
+
+    // Behavioral model using case statement
+    always @(*) begin
+        case(sel)
+            1'b0 : y = {1'b0, d}; // Select 0: Input goes to y[0], y[1] is 0
+            1'b1 : y = {d, 1'b0}; // Select 1: Input goes to y[1], y[0] is 0
+            default : y = 2'b00;  // Default safety case
+        endcase
+    end
+endmodule
+
+-------
+
+module demux1to2_tb;
+    // Inputs are reg
+    reg d, sel;
+    // Outputs are wire
+    wire [1:0] y;
+
+    // Instantiate the Unit Under Test (UUT)
+    demux1to2 dut (
+        .d(d),
+        .sel(sel),
+        .y(y)
+    );
+
+    initial begin
+        // Monitor changes
+        $monitor("Time=%0t | sel=%b, d=%b => y[1]=%b, y[0]=%b", $time, sel, d, y[1], y[0]);
+        
+        // Initialize Inputs
+        d = 1'b0; sel = 1'b0;
+        #10;
+        
+        // Test Case 1: sel=0, d=1 -> y[0] should be 1, y[1] should be 0
+        d = 1'b1; sel = 1'b0;
+        #10;
+        
+        // Test Case 2: sel=1, d=1 -> y[1] should be 1, y[0] should be 0
+        d = 1'b1; sel = 1'b1;
+        #10;
+        
+        // Test Case 3: sel=1, d=0 -> y[1] should be 0, y[0] should be 0
+        d = 1'b0; sel = 1'b1;
+        #10;
+        
+        $finish;
+    end
+
+    // VCD Dump for waveform analysis
+    initial begin
+        $dumpfile("waveform.vcd");
+        $dumpvars(0, demux1to2_tb);
+    end
+endmodule

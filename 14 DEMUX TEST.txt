@@ -1,0 +1,54 @@
+1:4 DEMUX TEST
+
+
+module demux1to4(
+    input d,
+    input [1:0] sel,
+    output reg [3:0] y
+);
+
+always @(*) begin
+    case(sel)
+        2'b00 : y = 4'b0001 & {4{d}};
+        2'b01 : y = 4'b0010 & {4{d}};
+        2'b10 : y = 4'b0100 & {4{d}};
+        2'b11 : y = 4'b1000 & {4{d}};
+        default : y = 4'b0000;
+    endcase
+end
+
+endmodule
+
+-----
+ 
+module tb;
+
+reg d;
+reg [1:0] sel;
+wire [3:0] y;
+
+demux1to4 dut(
+    .d(d),
+    .sel(sel),
+    .y(y)
+);
+
+initial begin
+    $monitor("sel=%b, d=%b => y=%b", sel, d, y);
+
+    d = 1'b1;
+
+    sel = 2'b00; #10;
+    sel = 2'b01; #10;
+    sel = 2'b10; #10;
+    sel = 2'b11; #10;
+
+    $finish;
+end
+
+initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars(0, demux1to4_tb);
+end
+
+endmodule

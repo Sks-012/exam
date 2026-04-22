@@ -1,0 +1,59 @@
+4:1 MUX
+
+module MUX (I0, I1, I2, I3, S0, S1, Y);
+    input I0, I1, I2, I3, S0, S1;
+    output reg Y;
+
+    always @(*) begin
+        case ({S1, S0})
+            2'b00 : Y = I0;
+            2'b01 : Y = I1;
+            2'b10 : Y = I2;
+            2'b11 : Y = I3;
+            default : Y = 1'bx;
+        endcase
+    end
+endmodule
+
+
+------
+
+`timescale 1ns/1ps
+
+module MUX_tb();
+    reg I0, I1, I2, I3, S0, S1;
+    wire Y;
+
+    // Instantiating the multiplexer module (UUT - Unit Under Test)
+    // Using named mapping is better practice
+    MUX uut (
+        .I0(I0),
+        .I1(I1),
+        .I2(I2),
+        .I3(I3),
+        .S0(S0),
+        .S1(S1),
+        .Y(Y)
+    );
+
+    initial begin
+        I0=1; I1=0; I2=0; I3=0; S0=0; S1=0; // Expect Y=1 (Select 00 -> I0)
+        #10;
+        I0=1; I1=0; I2=1; I3=1; S0=0; S1=1; // Expect Y=0 (Select 01 -> I1)
+        #10;
+        I0=1; I1=1; I2=0; I3=1; S0=1; S1=0; // Expect Y=0 (Select 10 -> I2)
+        #10;
+        I0=1; I1=0; I2=0; I3=1; S0=1; S1=1; // Expect Y=1 (Select 11 -> I3)
+        #10;
+        $finish;
+    end
+
+    initial begin
+        // Generating the waveform file for simulation
+        $dumpfile("waveform.vcd");
+        $dumpvars(0, MUX_tb);
+        // Added monitor to display results in console
+        $monitor("Time=%0t | S1S0=%b%b | Inputs=%b%b%b%b | Y=%b",
+                 $time, S1, S0, I3, I2, I1, I0, Y);
+    end
+endmodule

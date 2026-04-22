@@ -1,0 +1,54 @@
+TFF
+
+module t_ff(
+    input T,
+    input clk,
+    input reset,
+    output reg Q
+);
+
+always @(posedge clk or posedge reset) begin
+    if (reset)
+        Q <= 0;        // initialize
+    else if (T)
+        Q <= ~Q;       // toggle
+    else
+        Q <= Q;        // hold
+end
+
+endmodule
+
+
+-----
+
+module t_ff_tb;
+
+reg T, clk, reset;
+wire Q;
+
+// Instantiate DUT
+t_ff DUT (T, clk, reset, Q);
+
+// Clock generation
+always #5 clk = ~clk;
+
+initial begin
+    $dumpfile("tff.vcd");
+    $dumpvars(0, t_ff_tb);
+
+    // Initialize
+    clk = 0;
+    reset = 1; T = 0;
+    #10 reset = 0;
+
+    // Test cases
+    T = 0; #10;   // hold
+    T = 1; #10;   // toggle
+    T = 1; #10;   // toggle again
+    T = 0; #10;   // hold
+    T = 1; #10;   // toggle
+
+    #20 $finish;
+end
+
+endmodule

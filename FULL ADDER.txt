@@ -1,0 +1,57 @@
+FULL ADDER
+
+_*FULL ADDER (BEHAVIORAL CODE)*_
+
+
+module FA(A, B, Cin, Sum, Cout);
+  input A, B, Cin;
+  output reg Sum, Cout;
+
+  always @(A or B or Cin) begin
+    if (A == 0 && B == 0 && Cin == 0) begin
+      Sum = 0; Cout = 0;
+    end else if (A == 0 && B == 0 && Cin == 1) begin
+      Sum = 1; Cout = 0;
+    end else if (A == 0 && B == 1 && Cin == 0) begin
+      Sum = 1; Cout = 0;
+    end else if (A == 0 && B == 1 && Cin == 1) begin
+      Sum = 0; Cout = 1;
+    end else if (A == 1 && B == 0 && Cin == 0) begin
+      Sum = 1; Cout = 0;
+    end else if (A == 1 && B == 0 && Cin == 1) begin
+      Sum = 0; Cout = 1;
+    end else if (A == 1 && B == 1 && Cin == 0) begin
+      Sum = 0; Cout = 1;
+    end else if (A == 1 && B == 1 && Cin == 1) begin
+      Sum = 1; Cout = 1;
+    end
+  end
+endmodule
+
+
+-------
+
+module FA_tb;
+  reg A, B, Cin;
+  wire Sum, Cout;
+
+  FA uut (A, B, Cin, Sum, Cout);
+
+  initial begin
+    $dumpfile("FA_tb.vcd");
+    $dumpvars(0, FA_tb);
+    $display("A B Cin | Sum Cout");
+    $display("------------------");
+
+    A=0; B=0; Cin=0; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+    A=0; B=0; Cin=1; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+    A=0; B=1; Cin=0; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+    A=0; B=1; Cin=1; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+    A=1; B=0; Cin=0; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+    A=1; B=0; Cin=1; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+    A=1; B=1; Cin=0; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+    A=1; B=1; Cin=1; #10 $display("%b %b %b | %b %b", A,B,Cin,Sum,Cout);
+
+    $finish;
+  end
+endmodule
